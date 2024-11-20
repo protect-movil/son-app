@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "836907552574",
+    "project_id": "unidad2-a66d5",
+    "storage_bucket": "unidad2-a66d5.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:836907552574:android:20201f6f0b133a5033a66f",
+        "android_client_info": {
+          "package_name": "utez.edu.mx"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBeb6JYpHI5zKLmtZ3_nhjgnZO_Zc6VEs8"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
