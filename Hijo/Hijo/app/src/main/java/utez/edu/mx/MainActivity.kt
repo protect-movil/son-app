@@ -3,6 +3,7 @@ package utez.edu.mx
 import android.content.Context
 import android.content.SharedPreferences
 import android.os.Bundle
+import android.util.Log
 import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
@@ -24,89 +25,89 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
+        // Inicializar Firestore
+        db = FirebaseFirestore.getInstance()
+
+        // Inicializar SharedPreferences y obtener o generar el ID del hijo
+        sharedPreferences = getSharedPreferences("ChildAppPrefs", Context.MODE_PRIVATE)
+        childId = sharedPreferences.getString("CHILD_ID", null) ?: generateAndSaveChildId()
+
+        // Mostrar el ID del hijo en la interfaz
+        val tvChildId = findViewById<TextView>(R.id.tvChildId)
+        tvChildId.text = "ID del Hijo: $childId"
+
         // Configuración del RecyclerView
         recyclerView = findViewById(R.id.rvInvitations)
         recyclerView.layoutManager = LinearLayoutManager(this)
-        invitationList = mutableListOf() // Inicializa la lista de invitaciones
+        invitationList = mutableListOf()
 
         // Inicializa el adaptador
         invitationAdapter = InvitationAdapter(
-            invitations = invitationList, // Lista de invitaciones
-            context = this, // Contexto de la actividad
+            invitations = invitationList,
+            context = this,
             onInvitationAccepted = { invitation ->
-                // Manejo cuando se acepta la invitación
-                fetchInvitations() // Recarga la lista
+                acceptInvitation(invitation)
             }
         )
         recyclerView.adapter = invitationAdapter
 
         // Llama al método para cargar las invitaciones
         fetchInvitations()
+
     }
 
-    /**
-     * Genera un nuevo ID único para el hijo y lo guarda en SharedPreferences.
-     */
     private fun generateAndSaveChildId(): String {
         val id = UUID.randomUUID().toString()
         sharedPreferences.edit().putString("CHILD_ID", id).apply()
         return id
     }
 
-    /**
-     * Obtiene las invitaciones dirigidas al hijo desde Firestore.
-     */
     private fun fetchInvitations() {
         db.collection("invitations")
-            .whereEqualTo("childId", childId)
-            .get()
-            .addOnSuccessListener { result ->
+            .whereEqualTo("childId", childId) // Usamos el ID del hijo correctamente
+            .addSnapshotListener { snapshots, error ->
+                if (error != null) {
+                    Toast.makeText(this, "Error al cargar invitaciones: ${error.message}", Toast.LENGTH_SHORT).show()
+                    return@addSnapshotListener
+                }
+
+                // Actualiza la lista de invitaciones con los cambios en tiempo real
                 invitationList.clear()
-                for (document in result) {
-                    val invitation = document.toObject(Invitation::class.java).apply { id = document.id }
+                for (document in snapshots!!) {
+                    val invitation = document.toObject(Invitation::class.java).apply {
+                        id = document.id
+                    }
                     invitationList.add(invitation)
                 }
                 invitationAdapter.notifyDataSetChanged()
             }
-            .addOnFailureListener { e ->
-                Toast.makeText(this, "Error al cargar invitaciones: ${e.message}", Toast.LENGTH_SHORT).show()
-            }
     }
 
-    /**
-     * Acepta la invitación del padre y actualiza el estado en Firestore.
-     */
+
+
     private fun acceptInvitation(invitation: Invitation) {
-        db.collection("invitations").document(invitation.id)
-            .update("status", "Aceptado")
-            .addOnSuccessListener {
-                Toast.makeText(this, "Invitación aceptada", Toast.LENGTH_SHORT).show()
-                fetchInvitations() // Actualizar lista de invitaciones
-                notifyParent(invitation.parentId) // Notificar al padre que fue aceptado
-            }
-            .addOnFailureListener { e ->
-                Toast.makeText(this, "Error al aceptar la invitación: ${e.message}", Toast.LENGTH_SHORT).show()
-            }
-    }
+        val childId = sharedPreferences.getString("CHILD_ID", null) ?: return
 
-    /**
-     * Notifica al padre que la invitación fue aceptada.
-     */
-    private fun notifyParent(parentId: String) {
-        val notification = hashMapOf(
-            "childId" to childId,
-            "message" to "Invitación aceptada por el hijo.",
-            "timestamp" to System.currentTimeMillis()
+        val childData = hashMapOf(
+            "name" to "Nombre del Hijo", // Cambia dinámicamente según los datos del hijo
+            "id" to childId,
+            "parentId" to invitation.parentId
         )
 
-        db.collection("users").document(parentId)
-            .collection("notifications")
-            .add(notification)
+        db.collection("usuarios").document("hijos")
+            .collection(childId) // Aquí almacenamos el hijo
+            .document("details")
+            .set(childData)
             .addOnSuccessListener {
-                Toast.makeText(this, "Notificación enviada al padre", Toast.LENGTH_SHORT).show()
+                Log.d("Firestore", "Hijo agregado correctamente en la colección general de hijos")
+                Toast.makeText(this, "Hijo registrado correctamente", Toast.LENGTH_SHORT).show()
             }
             .addOnFailureListener { e ->
-                Toast.makeText(this, "Error al notificar al padre: ${e.message}", Toast.LENGTH_SHORT).show()
+                Log.e("Firestore", "Error al registrar hijo: ${e.message}")
+                Toast.makeText(this, "Error al registrar hijo", Toast.LENGTH_SHORT).show()
             }
     }
+
+
 }
+

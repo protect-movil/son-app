@@ -1,13 +1,13 @@
 {
   "project_info": {
-    "project_number": "836907552574",
-    "project_id": "unidad2-a66d5",
-    "storage_bucket": "unidad2-a66d5.firebasestorage.app"
+    "project_number": "726251400108",
+    "project_id": "integradora2-652bd",
+    "storage_bucket": "integradora2-652bd.firebasestorage.app"
   },
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:836907552574:android:20201f6f0b133a5033a66f",
+        "mobilesdk_app_id": "1:726251400108:android:8d42f3ab9fedff8f856809",
         "android_client_info": {
           "package_name": "utez.edu.mx"
         }
@@ -15,7 +15,7 @@
       "oauth_client": [],
       "api_key": [
         {
-          "current_key": "AIzaSyBeb6JYpHI5zKLmtZ3_nhjgnZO_Zc6VEs8"
+          "current_key": "AIzaSyAoPSYCkoNolkMxzJBnWvkqThXIgClGMec"
         }
       ],
       "services": {

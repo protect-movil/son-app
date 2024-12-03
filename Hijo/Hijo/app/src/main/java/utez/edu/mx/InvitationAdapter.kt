@@ -11,9 +11,9 @@ import androidx.recyclerview.widget.RecyclerView
 import com.google.firebase.firestore.FirebaseFirestore
 
 class InvitationAdapter(
-    private val invitations: MutableList<Invitation>, // Lista de invitaciones
-    private val context: Context, // Contexto de la aplicación
-    private val onInvitationAccepted: (Invitation) -> Unit // Acción cuando se acepta una invitación
+    private val invitations: MutableList<Invitation>,
+    private val context: Context,
+    private val onInvitationAccepted: (Invitation) -> Unit
 ) : RecyclerView.Adapter<InvitationAdapter.InvitationViewHolder>() {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): InvitationViewHolder {
@@ -43,17 +43,17 @@ class InvitationAdapter(
         private fun acceptInvitation(invitation: Invitation) {
             val db = FirebaseFirestore.getInstance()
 
-            // Actualizar estado de la invitación en Firebase
+            // Corregir la ruta: actualizar la invitación en la colección "invitations"
             db.collection("invitations").document(invitation.id)
                 .update("status", "accepted")
                 .addOnSuccessListener {
                     Toast.makeText(context, "Invitación aceptada", Toast.LENGTH_SHORT).show()
-                    // Ejecutar la acción pasada desde la actividad
                     onInvitationAccepted(invitation)
                 }
                 .addOnFailureListener { e ->
                     Toast.makeText(context, "Error al aceptar la invitación: ${e.message}", Toast.LENGTH_SHORT).show()
                 }
         }
+
     }
 }

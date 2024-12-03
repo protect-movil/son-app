@@ -19,6 +19,6 @@
         android:layout_height="wrap_content"
         android:text="Aceptar"
         android:layout_marginTop="8dp"
-        android:backgroundTint="@color/primary_color"
+        android:backgroundTint="@color/black"
         android:textColor="@android:color/white" />
 </LinearLayout>
