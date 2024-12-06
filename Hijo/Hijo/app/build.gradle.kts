@@ -2,6 +2,7 @@ plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.kotlin.android)
     id("com.google.gms.google-services") // Plugin de Google services
+    alias(libs.plugins.google.android.libraries.mapsplatform.secrets.gradle.plugin) // Plugin de Google services
 }
 
 android {
@@ -36,6 +37,9 @@ android {
     kotlinOptions {
         jvmTarget = "1.8"
     }
+    buildFeatures {
+        viewBinding = true
+    }
 }
 
 dependencies {
@@ -52,6 +56,11 @@ dependencies {
     implementation("com.google.firebase:firebase-auth-ktx")
     implementation("com.google.firebase:firebase-firestore-ktx")
     implementation("com.google.firebase:firebase-analytics-ktx")
+
+    // Servicios de autenticación de Google Play
+    implementation("com.google.android.gms:play-services-auth:20.7.0")
+    implementation(libs.play.services.maps)
+    implementation(libs.play.services.location)
 
     // Dependencias para testing
     testImplementation(libs.junit)

@@ -16,6 +16,12 @@
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/rvInvitations"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_marginTop="16dp" />
+        android:layout_height="300dp"
+        android:layout_marginBottom="16dp" />
+
+    <fragment
+        android:id="@+id/mapFragment"
+        android:name="com.google.android.gms.maps.SupportMapFragment"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent" />
 </LinearLayout>
